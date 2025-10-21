@@ -1,0 +1,10 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://parrepratyush84_db_user:JFIhAT3ujSpXfQ49@cluster0.mn8unfr.mongodb.net/studentexpenses?retryWrites=true&w=majority&appName=Cluster0
+  thymeleaf:
+    cache: false
+gemini:
+  api-key: AIzaSyAL0pW6d0zaZH4y44SgD-8bhUfsRBsVA0U
+server:
+  port: 8080

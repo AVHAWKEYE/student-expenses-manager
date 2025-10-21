@@ -1,0 +1,25 @@
+spring:
+  data:
+    mongodb:
+      # ✅ Cloud MongoDB (Atlas) connection string
+      # Replace 'appuser' and 'strong-password-123' with your real Atlas user credentials
+      uri: mongodb+srv://root:1234@cluster0.mn8unfr.mongodb.net/student_expenses?retryWrites=true&w=majority&appName=Cluster0
+  thymeleaf:
+    # Disable template caching during development
+    cache: false
+
+# ✅ Gemini API key — use environment variable (DO NOT hardcode key)
+gemini:
+  api-key: AIzaSyAL0pW6d0zaZH4y44SgD-8bhUfsRBsVA0U
+
+# ✅ Spring Boot server configuration
+server:
+  port: 8080
+
+# ✅ Optional logging setup (for easier debugging)
+logging:
+  level:
+    org.springframework.web: INFO
+    com.example: DEBUG
+  file:
+    name: logs/student-expense.log

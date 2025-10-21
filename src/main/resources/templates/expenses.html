@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Expense Tracker Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+        }
+        header {
+            background: #007bff;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.5em;
+        }
+        main {
+            padding: 30px;
+        }
+        form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            justify-content: center;
+        }
+        form input, form button {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+        }
+        form button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        form button:hover {
+            background: #0056b3;
+        }
+        .summary-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px auto;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .summary-card h3 {
+            margin: 0;
+            color: #007bff;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #007bff;
+            color: white;
+        }
+        tr:hover {
+            background: #f1f1f1;
+        }
+        .filters {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .filters button {
+            background: #e9ecef;
+            border: none;
+            padding: 8px 14px;
+            margin: 0 5px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .filters button.active {
+            background: #007bff;
+            color: white;
+        }
+        #chartContainer {
+            width: 70%;
+            margin: 40px auto;
+        }
+    </style>
+</head>
+<body>
+<header>💰 Expense Tracker Dashboard</header>
+<main>
+    <form th:action="@{/expenses/add}" method="post">
+        <input name="name" placeholder="Expense name" required>
+        <input name="amount" type="number" step="0.01" placeholder="Amount" required>
+        <input name="category" placeholder="Category" required>
+        <button type="submit">Add</button>
+    </form>
+
+    <div class="summary-card">
+        <h3>Total Spent</h3>
+        <p style="font-size: 1.6em; color: #28a745; font-weight: bold;">
+            ₹ <span th:text="${#numbers.formatDecimal(totalSum, 1, 2)}"></span>
+
+        </p>
+    </div>
+
+    <div class="filters">
+        <button class="active">All Time</button>
+        <button>This Month</button>
+        <button>This Week</button>
+    </div>
+
+    <table>
+        <tr>
+            <th>Name</th><th>Amount</th><th>Category</th><th>Date</th><th>Action</th>
+        </tr>
+        <tr th:each="expense : ${expenses}">
+            <td th:text="${expense.name}"></td>
+            <td>₹<span th:text="${expense.amount}"></span></td>
+            <td th:text="${expense.category}"></td>
+            <td th:text="${expense.date}"></td>
+            <td><a th:href="@{'/expenses/delete/' + ${expense.id}}" style="color:red;">Delete</a></td>
+        </tr>
+    </table>
+
+    <div id="chartContainer">
+        <h3 style="text-align:center;">Spending by Category</h3>
+        <canvas id="expenseChart"></canvas>
+    </div>
+</main>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const categoryTotals = [[${categoryTotals}]];
+    const labels = Object.keys(categoryTotals);
+    const data = Object.values(categoryTotals);
+
+    const ctx = document.getElementById('expenseChart');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Total Spent (₹)',
+                data: data,
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(255, 159, 64, 0.6)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (context) => `₹ ${context.parsed.y}`
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Expenses by Category'
+                }
+            },
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+    /*]]>*/
+</script>
+</body>
+</html>

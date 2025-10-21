@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Bar Graph</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>Expenses Chart</h1>
+  <select id="type">
+    <option value="year">Year</option>
+    <option value="month">Month</option>
+    <option value="week">Week</option>
+  </select>
+  <canvas id="chart"></canvas>
+  <script>
+    async function load(type) {
+      const userId='demo';
+      let url='/api/expenses/year?userId='+userId+'&year=2025';
+      if (type==='month') url='/api/expenses/month?userId='+userId+'&year=2025&month=8';
+      if (type==='week') url='/api/expenses/week?userId='+userId+'&year=2025&week=32';
+      const res = await fetch(url);
+      const data = await res.json();
+      const labels = Object.keys(data);
+      const values = Object.values(data);
+      const ctx = document.getElementById('chart').getContext('2d');
+      if (window.myChart) window.myChart.destroy();
+      window.myChart = new Chart(ctx, {
+        type: 'bar',
+        data: { labels, datasets: [{ label: 'Expenses', data: values }]},
+        options: {}
+      });
+    }
+    document.getElementById('type').addEventListener('change', (e)=>load(e.target.value));
+    load('year');
+  </script>
+</body>
+</html>
